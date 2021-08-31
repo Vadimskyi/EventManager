@@ -20,7 +20,6 @@ namespace VadimskyiLab.Tests
         [Performance]
         public void EventManager_Subscribe()
         {
-            EventManager.CleanStateForEachTestCase();
             Measure.Method(() =>
                 {
                     for (int i = 0; i < 1000; i++)
@@ -129,7 +128,6 @@ namespace VadimskyiLab.Tests
         [Performance]
         public void EventManager_Unsubscribe()
         {
-            EventManager.CleanStateForEachTestCase();
             for (int i = 0; i < 1000; i++)
             {
                 TestEvent.Subscribe(MethodSubscriber);
@@ -261,7 +259,6 @@ namespace VadimskyiLab.Tests
         [Performance]
         public void EventManager_Invoke()
         {
-            EventManager.CleanStateForEachTestCase();
             for (int i = 0; i < 10000; i++)
             {
                 TestEvent.Subscribe(MethodSubscriber);
@@ -372,10 +369,37 @@ namespace VadimskyiLab.Tests
                 .Run();
         }
 
+        private int _sum;
+        [Test]
+        public void EventManager_ConsistencyTest()
+        {
+            _sum = 0;
+            TestDataEvent.Subscribe(MethodDataSubscriber);
+
+            int iterations = 1000;
+            var list = new List<TestData>(iterations);
+            for (int i = 1; i <= iterations; i++)
+            {
+                list.Add(new TestData(i));
+            }
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                TestDataEvent.Invoke(list[i]);
+            }
+            Assert.AreEqual(iterations / 2 * (iterations + 1), _sum);
+        }
+
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void MethodSubscriber()
         {
 
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private void MethodDataSubscriber(TestData data)
+        {
+            _sum += data.Index;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -385,8 +409,23 @@ namespace VadimskyiLab.Tests
         }
     }
 
-    public class TestEvent : EventBase<TestEvent>, IEvent
+    public class TestEvent : EventBase<TestEvent>
     {
+    }
+
+    public class TestDataEvent : EventBase<TestDataEvent, TestData>
+    {
+
+    }
+
+    public readonly struct TestData
+    {
+        public readonly int Index;
+
+        public TestData(int index)
+        {
+            Index = index;
+        }
     }
 
     /// <summary>

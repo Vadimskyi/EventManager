@@ -16,85 +16,11 @@ namespace VadimskyiLab.Events
     /// Non-thread-safe event manager
     /// Use only in single thread environment. Preferably Unity thread.
     /// </summary>
-    public static class EventManager
+    internal static class EventManager
     {
-        private static IReadOnlyDictionary<int, List<Delegate>> _bag;
+        private static IReadOnlyDictionary<int, List<Delegate>> _eventBag;
 
         static EventManager()
-        {
-            CleanStateForEachTestCase();
-        }
-
-        public static void DispatchEvent<Te>() where Te : IEvent
-        {
-            var typeIndex = TypeManager.GetTypeIndex<Te>();
-
-            //check in case there was a dynamic type created in runtime
-            if (!_bag.ContainsKey(typeIndex)) return;
-
-            var list = _bag[typeIndex];
-            var l = list.Count;
-            for (int i = 0; i < l; i++)
-            {
-                if (i >= list.Count) break;
-                ((Action)list[i]).Invoke();
-            }
-        }
-
-        public static void DispatchEvent<Te, Ta>(Ta data) where Te : IEvent where Ta : IEventArg
-        {
-            var typeIndex = TypeManager.GetTypeIndex<Te>();
-
-            //check in case there was a dynamic type created in runtime
-            if (!_bag.ContainsKey(typeIndex)) return;
-
-            var list = _bag[typeIndex];
-            var l = list.Count;
-            for (int i = 0; i < l; i++)
-            {
-                if (i >= list.Count) break;
-                ((Action<Ta>)list[i]).Invoke(data);
-            }
-        }
-
-        public static void SubscribeTo<Te>(Action callback) where Te : IEvent
-        {
-            Subscribe<Te>(callback);
-        }
-
-        public static void SubscribeTo<Te, Ta>(Action<Ta> callback) where Te : IEvent where Ta : IEventArg
-        {
-            Subscribe<Te>(callback);
-        }
-
-        private static void Subscribe<Te>(Delegate callback) where Te : IEvent
-        {
-            var typeIndex = TypeManager.GetTypeIndex<Te>();
-
-            if (!_bag.ContainsKey(typeIndex)) return;
-
-            _bag[typeIndex].Add(callback);
-        }
-
-        public static void UnsubscribeFrom<Te>(Delegate callback) where Te : IEvent
-        {
-            var typeIndex = TypeManager.GetTypeIndex<Te>();
-            if (!_bag.ContainsKey(typeIndex)) return;
-            _bag[typeIndex].Remove(callback);
-        }
-
-        private static IEnumerable<Type> GetTypesWithInterface(Assembly asm)
-        {
-            var it = typeof(IEvent);
-            return asm.GetLoadableTypes().Where(w => it.IsAssignableFrom(w) && !w.IsInterface);
-        }
-
-        /// <summary>
-        /// DO NOT CALL THIS METHOD MANUALLY!
-        /// Used for correct test results. As sometimes static class is cached in between tests.
-        /// </summary>
-        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public static void CleanStateForEachTestCase()
         {
             var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(GetTypesWithInterface);
 
@@ -106,7 +32,77 @@ namespace VadimskyiLab.Events
                 writeBag.Add(typeIndex, new List<Delegate>(5));
             }
 
-            _bag = writeBag;
+            _eventBag = writeBag;
+        }
+
+        public static void DispatchEvent<Te>()
+        {
+            var typeIndex = TypeManager.GetTypeIndex<Te>();
+
+            //check in case there was a dynamic type created in runtime
+            if (!_eventBag.ContainsKey(typeIndex)) return;
+
+            var list = _eventBag[typeIndex];
+            var l = list.Count;
+            for (int i = 0; i < l; i++)
+            {
+                if (i >= list.Count) break;
+                ((Action)list[i]).Invoke();
+            }
+        }
+
+        public static void SubscribeTo<Te>(Delegate callback) 
+        {
+            var typeIndex = TypeManager.GetTypeIndex<Te>();
+
+            if (!_eventBag.ContainsKey(typeIndex)) return;
+
+            _eventBag[typeIndex].Add(callback);
+        }
+
+        public static void UnsubscribeFrom<Te>(Delegate callback)
+        {
+            var typeIndex = TypeManager.GetTypeIndex<Te>();
+            if (!_eventBag.ContainsKey(typeIndex)) return;
+            _eventBag[typeIndex].Remove(callback);
+        }
+
+        private static IEnumerable<Type> GetTypesWithInterface(Assembly asm)
+        {
+            var it = typeof(IEvent);
+            return asm.GetLoadableTypes().Where(w => it.IsAssignableFrom(w) && !w.IsInterface);
+        }
+
+        public static void DispatchEvent<Te, Ta>(Ta data)
+        {
+            var typeIndex = TypeManager.GetTypeIndex<Te>();
+
+            //check in case there was a dynamic type created in runtime
+            if (!_eventBag.ContainsKey(typeIndex)) return;
+
+            var list = _eventBag[typeIndex];
+            var l = list.Count;
+            for (int i = 0; i < l; i++)
+            {
+                if (i >= list.Count) break;
+                ((Action<Ta>)list[i]).Invoke(data);
+            }
+        }
+
+        public static void DispatchEvent<Te, Ta0, Ta1>(Ta0 data0, Ta1 data1)
+        {
+            var typeIndex = TypeManager.GetTypeIndex<Te>();
+
+            //check in case there was a dynamic type created in runtime
+            if (!_eventBag.ContainsKey(typeIndex)) return;
+
+            var list = _eventBag[typeIndex];
+            var l = list.Count;
+            for (int i = 0; i < l; i++)
+            {
+                if (i >= list.Count) break;
+                ((Action<Ta0, Ta1>)list[i]).Invoke(data0, data1);
+            }
         }
     }
 }
