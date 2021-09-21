@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/Vadimskyi/EventManager/compare/v1.0.1...v1.0.2) (2021-09-21)
+
+
+### Bug Fixes
+
+* resolve release version conflict ([038d2ad](https://github.com/Vadimskyi/EventManager/commit/038d2ad5a7d2cf26ad779c0eefae4c86340a3ed4))
+
 ## [1.0.1](https://github.com/Vadimskyi/EventManager/compare/v1.0.0...v1.0.1) (2021-09-21)
 
 

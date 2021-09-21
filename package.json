@@ -1,6 +1,6 @@
 {
   "name": "com.vadimskyi.eventmanager",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "displayName": "Event Manager",
   "description": "Non-thread-safe event manager. Use only in single thread environment. Preferably Unity thread.",
   "unity": "2018.3",
