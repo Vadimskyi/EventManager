@@ -11,7 +11,8 @@ UnityOfficialSystem: https://learn.unity.com/tutorial/create-a-simple-messaging-
 ## Table of Contents
 
 - [Installation](#installation)
-    - [Unity](#unity)
+    - [Unity Package](#unity-package)
+    - [UPM CLI](#upm-cli)
 - [Quick Start](#quick-start)
 - [Main reasoning behind this library](#main-reasoning)
 - [Precaution](#precaution)
@@ -22,12 +23,21 @@ UnityOfficialSystem: https://learn.unity.com/tutorial/create-a-simple-messaging-
 This library is distributed via Unity's built-in package manager. Required Unity 2018.3 or later.
 Sinse Unity's package manager does not support git-url dependencies you should install them manually, if required.
 
-### Unity
-
+### Unity Package
 - Open Unity project
-- Navigate to Window->Package Manager menu
-- Top left dropdown -> "Add package from git Url"
-- Paste https://github.com/Vadimskyi/EventManager.git
+- Download and run .unitypackage file from the latest release
+
+### UPM CLI
+- You need to have upm-cli installed: https://github.com/openupm/openupm-cli#openupm-cli
+- Open Git-Bash, CMD, or PowerShell for Windows console
+```console
+# go to the unity project folder
+$ cd ~/Document/projects/hello-openupm
+
+# add package
+$ openupm add com.vadimskyi.eventmanager
+```
+- Open Unity for package to be installed
 
 ## Quick Start
 
