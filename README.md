@@ -1,4 +1,5 @@
 # Event Manager for C# (Unity, .NET, .NET Core)
+[![openupm](https://img.shields.io/npm/v/com.vadimskyi.eventmanager?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.vadimskyi.eventmanager/)
 - Non-thread-safe event manager. Use only in single thread environment. Example: Unity-Engine thread.
 - There are zero dependencies on Unity Engine components. Usage in any kind of c# project should be allowed.
 - Extremely easy to use and faster than most usual approaches
